@@ -5,6 +5,21 @@
     <title>WebAR</title>
     <script src="https://aframe.io/releases/1.0.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <style>
+        #positioning-button {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body style="margin: 0px; overflow: hidden;">
@@ -19,6 +34,8 @@
         <a-entity camera></a-entity>
     </a-scene>    
     
+    <!-- ポジショニングボタン -->
+    <button id="positioning-button">問題を出す</button>
 
     <script>
         // グローバル変数
@@ -32,16 +49,50 @@
 
         // マーカー検出時のイベントリスナー
         document.querySelector('a-scene').addEventListener('markerFound', function () {
-            var result = prompt('この建物は何でしょう');
 
-            if (result === 'ビッグアイ') {
-                alert('正解');
-            }
-            else {
-                alert('ざんねん、正解はビッグアイ');
+            if (!isPositioned) {
+                // マーカー検出時にオブジェクトを初期位置に戻す
+                movableObject.setAttribute('position', '0 0.5 0');
             }
         });
 
+        // ボタンクリックイベント
+        positioningButton.addEventListener('click', function () {
+            // マーカーが検出されている場合のみ処理
+            const markerEl = document.querySelector('a-marker');
+            if (markerEl.components.markertracking && markerEl.components.markertracking.isTracking) {
+                if (!isPositioned) {
+                    // 現在の位置を取得して固定
+                    const currentPosition = movableObject.getAttribute('position');
+                    fixedPosition = {
+                        x: currentPosition.x,
+                        y: currentPosition.y,
+                        z: currentPosition.z
+                    };
+
+                    // オブジェクトの色を変更して固定を示す
+                    movableObject.setAttribute('color', 'green');
+
+                    isPositioned = true;
+                    positioningButton.textContent = 'リセット';
+                } else {
+                    // リセット
+                    movableObject.setAttribute('position', '0 0.5 0');
+                    movableObject.setAttribute('color', 'red');
+                    isPositioned = false;
+                    positioningButton.textContent = '問題を出す';
+                }
+            } else {
+                var result = prompt('この建物は何でしょう');
+
+                if (result === 'ビッグアイ') {
+                    alert('正解');
+                }
+                else {
+                    alert('ざんねん、正解はビッグアイ');
+                }
+            }
+        });
     </script>
 </body>
 
