@@ -35,7 +35,7 @@
     </a-scene>    
     
     <!-- ポジショニングボタン -->
-    <button id="positioning-button">オブジェクトを固定</button>
+    <button id="positioning-button">問題を出す</button>
 
     <script>
         // グローバル変数
@@ -80,12 +80,17 @@
                     movableObject.setAttribute('position', '0 0.5 0');
                     movableObject.setAttribute('color', 'red');
                     isPositioned = false;
-                    positioningButton.textContent = 'オブジェクトを固定';
+                    positioningButton.textContent = '問題を出す';
                 }
             } else {
-                alert('この建物は何でしょう');
-                alert('正解は…');
-                alert('ビッグアイ');
+                var result = prompt('この建物は何でしょう');
+
+                if (result === 'ビッグアイ') {
+                    alert('正解');
+                }
+                else {
+                    alert('ざんねん、正解はビッグアイ');
+                }
             }
         });
     </script>
