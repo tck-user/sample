@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
     <title>WebAR</title>
@@ -25,13 +24,18 @@
 
 <body style="margin: 0px; overflow: hidden;">
     <a-scene embedded arjs>
-        <a-marker id="movable-object" type='pattern' url='./marker/pattern-pattern-marker.patt' id="marker">
-            <a-box position="0 0.5 0" material="color: red;" id="box"></a-box>
-            <a-entity id="movable-object-2" position="0 -1 0" scale="1 1 1" gltf-model="./assets/ビッグアイ.glb"></a-entity>
+        <a-marker preset="hiro">
+            <a-entity  position="0 -1 0" scale="1 1 1" gltf-model="./assets/pengin.glb"></a-entity>
+        </a-marker>
+        <a-marker type='pattern' url='./marker/pattern-pattern-marker.patt'>
+            <a-entity id="movable-object" position="0 -1 0" scale="1 1 1" gltf-model="./assets/ビッグアイ.glb">
+            </a-entity>
         </a-marker>
         <a-entity camera></a-entity>
-    </a-scene>
-    <button id="positioning-button" onclick="handleButtonClick()">オブジェクトを固定</button>
+    </a-scene>    
+    
+    <!-- ポジショニングボタン -->
+    <button id="positioning-button">オブジェクトを固定</button>
 
     <script>
         // グローバル変数
@@ -53,7 +57,7 @@
         });
 
         // ボタンクリックイベント
-        function handleButtonClick() {
+        positioningButton.addEventListener('click', function () {
             // マーカーが検出されている場合のみ処理
             const markerEl = document.querySelector('a-marker');
             if (markerEl.components.markertracking && markerEl.components.markertracking.isTracking) {
@@ -83,7 +87,7 @@
             }
         });
     </script>
-
 </body>
+
 
 </html>
