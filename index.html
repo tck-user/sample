@@ -57,9 +57,6 @@
 
         // ボタンクリックイベント
         positioningButton.addEventListener('click', function () {
-            // マーカーが検出されている場合のみ処理
-            const markerEl = document.querySelector('a-marker');
-            if (markerEl.components.markertracking && markerEl.components.markertracking.isTracking) {
                 if (!isPositioned) {
                     // 現在の位置を取得して固定
                     const currentPosition = movableObject.getAttribute('position');
@@ -80,9 +77,6 @@
                     movableObject.setAttribute('color', 'red');
                     isPositioned = false;
                     positioningButton.textContent = 'オブジェクトを固定';
-                }
-            } else {
-                alert('マーカーを認識してから操作してください');
             }
         });
     </script>
