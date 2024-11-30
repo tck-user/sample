@@ -49,6 +49,7 @@
 
         // マーカー検出時のイベントリスナー
         document.querySelector('a-scene').addEventListener('markerFound', function () {
+
             if (!isPositioned) {
                 // マーカー検出時にオブジェクトを初期位置に戻す
                 movableObject.setAttribute('position', '0 0.5 0');
@@ -57,6 +58,9 @@
 
         // ボタンクリックイベント
         positioningButton.addEventListener('click', function () {
+            // マーカーが検出されている場合のみ処理
+            const markerEl = document.querySelector('a-marker');
+            if (markerEl.components.markertracking && markerEl.components.markertracking.isTracking) {
                 if (!isPositioned) {
                     // 現在の位置を取得して固定
                     const currentPosition = movableObject.getAttribute('position');
@@ -77,6 +81,11 @@
                     movableObject.setAttribute('color', 'red');
                     isPositioned = false;
                     positioningButton.textContent = 'オブジェクトを固定';
+                }
+            } else {
+                alert('この建物は何でしょう');
+                alert('正解は…');
+                alert('ビッグアイ');
             }
         });
     </script>
