@@ -3,9 +3,13 @@
 <head>
     <meta charset="utf-8">
     <title>WebAR</title>
+    <!-- A-Frame ライブラリの読み込み -->
     <script src="https://aframe.io/releases/1.0.0/aframe.min.js"></script>
+    <!-- AR.js ライブラリの読み込み -->
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
     <style>
+        /* ポジショニングボタンのスタイル設定 */
         #positioning-button {
             position: fixed;
             bottom: 20px;
@@ -23,33 +27,35 @@
 </head>
 
 <body style="margin: 0px; overflow: hidden;">
+    <!-- A-Frameシーンの作成、AR.jsを利用したARコンテンツ -->
     <a-scene embedded arjs>
+        <!-- Hiroマーカーを使ったオブジェクトの配置 -->
         <a-marker preset="hiro">
             <a-entity  position="0 -1 0" scale="1 1 1" gltf-model="./assets/pengin.glb"></a-entity>
         </a-marker>
+        <!-- カスタムパターンマーカーを使ったオブジェクトの配置 -->
         <a-marker type='pattern' url='./marker/pattern-QR_398722.patt'>
-            <a-entity id="movable-object" position="0 -1 0" scale="1 1 1" gltf-model="./assets/ビッグアイ.glb">
+            <a-entity id="movable-object" position="0 -1 0" scale="1 1 1" gltf-model="./assets/テクゾーアクション.glb animation-mixer">
             </a-entity>
         </a-marker>
+        <!-- カメラの配置 -->
         <a-entity camera></a-entity>
     </a-scene>    
     
-    <!-- ポジショニングボタン -->
+    <!-- ユーザーによるオブジェクトの位置変更用ボタン -->
     <button id="positioning-button">問題を出す</button>
 
     <script>
         // グローバル変数
-        let isPositioned = false;
-        let fixedPosition = { x: 0, y: 0.5, z: 0 };
+        let isPositioned = false; // オブジェクトが固定されているかどうかを管理
+        let fixedPosition = { x: 0, y: 0.5, z: 0 }; // オブジェクトの初期位置
 
         // 要素の取得
-        const movableObject = document.querySelector('#movable-object');
-        const positioningButton = document.querySelector('#positioning-button');
-
+        const movableObject = document.querySelector('#movable-object'); // 動かせるオブジェクト
+        const positioningButton = document.querySelector('#positioning-button'); // ボタン
 
         // マーカー検出時のイベントリスナー
         document.querySelector('a-scene').addEventListener('markerFound', function () {
-
             if (!isPositioned) {
                 // マーカー検出時にオブジェクトを初期位置に戻す
                 movableObject.setAttribute('position', '0 0.5 0');
@@ -76,16 +82,17 @@
                     isPositioned = true;
                     positioningButton.textContent = 'リセット';
                 } else {
-                    // リセット
+                    // リセット：オブジェクトの位置を初期位置に戻し色を変更
                     movableObject.setAttribute('position', '0 0.5 0');
                     movableObject.setAttribute('color', 'red');
                     isPositioned = false;
                     positioningButton.textContent = '問題を出す';
                 }
             } else {
+                // マーカーが見つからなかった場合、質問を表示してユーザーの回答を求める
                 var result = prompt('この建物は何でしょう');
 
-                if (result === 'ビッグアイ') {
+                if (result === 'ビッグアイ', 'テクゾー') {
                     alert('正解');
                 }
                 else {
@@ -95,6 +102,4 @@
         });
     </script>
 </body>
-
-
 </html>
