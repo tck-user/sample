@@ -23,83 +23,91 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        #positioning-button:disabled {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            padding: 10px 20px;
+            background-color: #adb8ad;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
 <body style="margin: 0px; overflow: hidden;">
+
+    <script>
+
+      let targetId = ''; // 表示オブジェクトの識別用ID
+
+      AFRAME.registerComponent('registerevents', {
+          init: function ()
+          {
+            // マーカーの要素を取得
+            let marker = this.el;
+
+            // マーカーが見つかったときのイベント
+              marker.addEventListener('markerFound', function() {
+                  console.log( marker.id );
+                  targetId = marker.id; // マーカーのIDを取得
+                  document.querySelector('#positioning-button').disabled = false;  // ボタンを有効化
+
+              });
+
+              // マーカーを見失ったときのイベント
+              marker.addEventListener('markerLost', function() {
+                  console.log( marker.id + 'is lost.' );
+                  targetId = '';// マーカーのIDをリセット
+                  document.querySelector('#positioning-button').disabled = true;  // ボタンを無効化
+              });
+          }
+      });
+
+    </script>
     <!-- A-Frameシーンの作成、AR.jsを利用したARコンテンツ -->
     <a-scene embedded arjs>
         <!-- Hiroマーカーを使ったオブジェクトの配置 -->
-        <a-marker preset="hiro">
+        <a-marker preset="hiro" id="pengin" registerevents>
             <a-entity  position="0 -1 0" scale="1 1 1" gltf-model="./assets/pengin.glb"></a-entity>
         </a-marker>
         <!-- カスタムパターンマーカーを使ったオブジェクトの配置 -->
-        <a-marker type='pattern' url='./marker/pattern-QR_398722.patt'>
-            <a-entity id="movable-object" position="0 -1 0" scale="1 1 1" gltf-model="./assets/アクション２.glb" animation-mixer>
+        <a-marker type='pattern' url='./marker/pattern-QR_398722.patt' id="techzoo" registerevents>
+            <a-entity id="movable-object" position="0 -1 0" scale="1 1 1" gltf-model="./assets/アクショSン２.glb" animation-mixer>
             </a-entity>
         </a-marker>
         <!-- カメラの配置 -->
         <a-entity camera></a-entity>
-    </a-scene>    
-    
+    </a-scene>
+
     <!-- ユーザーによるオブジェクトの位置変更用ボタン -->
-    <button id="positioning-button">問題を出す</button>
+    <button id="positioning-button" disabled>問題を出す</button>
 
     <script>
-        // グローバル変数
-        let isPositioned = false; // オブジェクトが固定されているかどうかを管理
-        let fixedPosition = { x: 0, y: 0.5, z: 0 }; // オブジェクトの初期位置
+      // ボタンクリックイベント
+      document.querySelector('#positioning-button').addEventListener('click', function () {
 
-        // 要素の取得
-        const movableObject = document.querySelector('#movable-object'); // 動かせるオブジェクト
-        const positioningButton = document.querySelector('#positioning-button'); // ボタン
+        var result = prompt('このオブジェクトは何でしょう\n（回答はすべてカタカナで入力してください）');
 
-        // マーカー検出時のイベントリスナー
-        document.querySelector('a-scene').addEventListener('markerFound', function () {
-            if (!isPositioned) {
-                // マーカー検出時にオブジェクトを初期位置に戻す
-                movableObject.setAttribute('position', '0 0.5 0');
-            }
-        });
+        if (targetId === 'pengin') {
+          if (result === 'ペンギン') {
+              alert('正解');
+          }else {
+              alert('ざんねん、正解はペンギン');
+          }
 
-        // ボタンクリックイベント
-        positioningButton.addEventListener('click', function () {
-            // マーカーが検出されている場合のみ処理
-            const markerEl = document.querySelector('a-marker');
-            if (markerEl.components.markertracking && markerEl.components.markertracking.isTracking) {
-                if (!isPositioned) {
-                    // 現在の位置を取得して固定
-                    const currentPosition = movableObject.getAttribute('position');
-                    fixedPosition = {
-                        x: currentPosition.x,
-                        y: currentPosition.y,
-                        z: currentPosition.z
-                    };
-
-                    // オブジェクトの色を変更して固定を示す
-                    movableObject.setAttribute('color', 'green');
-
-                    isPositioned = true;
-                    positioningButton.textContent = 'リセット';
-                } else {
-                    // リセット：オブジェクトの位置を初期位置に戻し色を変更
-                    movableObject.setAttribute('position', '0 0.5 0');
-                    movableObject.setAttribute('color', 'red');
-                    isPositioned = false;
-                    positioningButton.textContent = '問題を出す';
-                }
-            } else {
-                // マーカーが見つからなかった場合、質問を表示してユーザーの回答を求める
-                var result = prompt('このオブジェクトは何でしょう\n（回答はすべてカタカナで入力してください）');
-
-                if (result === 'ビッグアイ', 'テクゾー') {
-                    alert('正解');
-                }
-                else {
-                    alert('ざんねん、正解はビッグアイ');
-                }
-            }
-        });
+        } else if(targetId === 'techzoo'){
+          if (result === 'テクゾー') {
+            alert('正解');
+          }else {
+            alert('ざんねん、正解はテクゾー');
+          }
+        }
+      });
     </script>
 </body>
 </html>
